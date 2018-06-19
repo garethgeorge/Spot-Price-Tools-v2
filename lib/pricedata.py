@@ -12,9 +12,15 @@ class PriceTimeSeriesNaive(object):
         self.data = self.data[:-1]
     
     def expand_with_interval(self, interval):
-        for record in self.data:
-            for x in range(0, round(record["duration"] / interval)):
-                yield dict(record)
+        start_time, stop_time = self.data[0]["timestamp"], self.data[-1]["timestamp"]
+        cur_index = 0
+        for ts in range(start_time, stop_time, interval):
+            while ts >= self.data[cur_index]["timestamp"]:
+                cur_index += 1
+            copy = dict(self.data[cur_index - 1])
+            copy["timestamp"] = ts
+            yield copy
+
 
 class PriceBucketNaive(object):
     def __init__(self, prices):
@@ -26,6 +32,13 @@ class PriceBucketNaive(object):
 
     def getAverage(self):
         return sum(record["price"] for record in self.by_ts) / float(len(self.by_ts))
+
+    def size(self):
+        return len(self.by_ts)
+
+    def shrink_to_size(self, size):
+        return PriceBucketNaive(self.by_ts[-size:])
+
 
 # class PriceTimeSeries(object):
 #     def __init__(self, data):

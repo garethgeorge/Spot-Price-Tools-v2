@@ -47,49 +47,24 @@ def main():
         series_p95_after = [bucket.getQuantile(0.95)["price"] for bucket in buckets_after]
 
         # f = plt.figure(figsize=(5, 10))
-        # xvalues = list(range(-min_len, 0))
-        # plt.subplot(5, 1, 1)
-        # plt.title("%s-%s averages" % (az, insttype))
-        # plt.ylabel("Price $")
-        # plt.plot(xvalues, series_avg_before, label="before")
-        # plt.plot(xvalues, series_avg_after, label="after")
-        
-        # plt.subplot(5, 1, 2)
-        # plt.title("%s-%s q.5" % (az, insttype))
-        # plt.ylabel("Price $")
-        # plt.plot(xvalues, series_p50_before, label="before")
-        # plt.plot(xvalues, series_p50_after, label="after")
 
-        # plt.subplot(5, 1, 3)
-        # plt.title("%s-%s q.66" % (az, insttype))
-        # plt.ylabel("Price $")
-        # plt.plot(xvalues, series_p66_before, label="before")
-        # plt.plot(xvalues, series_p66_after, label="after")
-
-        # plt.subplot(5, 1, 4)
-        # plt.title("%s-%s q.95" % (az, insttype))
-        # plt.ylabel("Price $")
-        # plt.plot(xvalues, series_p95_before, label="before")
-        # plt.plot(xvalues, series_p95_after, label="after")
-
-        # f = plt.figure(figsize=(5, 10))
         xvalues = list(range(-min_len, 0))
-        axes[0].set_title("%s-%s averages\ninterval: %d" % (az, insttype, interval))
+        axes[0].set_title("%s-%s averages\nduration: %d" % (az, insttype, interval / 3600))
         axes[0].set_ylabel("Price $")
         axes[0].plot(xvalues, series_avg_before, label="before")
         axes[0].plot(xvalues, series_avg_after, label="after")
         
-        axes[1].set_title("%s-%s q.5" % (az, insttype))
+        axes[1].set_title("%s-%s q.5\nduration: %d" % (az, insttype, interval / 3600))
         axes[1].set_ylabel("Price $")
         axes[1].plot(xvalues, series_p50_before, label="before")
         axes[1].plot(xvalues, series_p50_after, label="after")
 
-        axes[2].set_title("%s-%s q.66" % (az, insttype))
+        axes[2].set_title("%s-%s q.66\nduration: %d" % (az, insttype, interval / 3600))
         axes[2].set_ylabel("Price $")
         axes[2].plot(xvalues, series_p66_before, label="before")
         axes[2].plot(xvalues, series_p66_after, label="after")
 
-        axes[3].set_title("%s-%s q.95" % (az, insttype))
+        axes[3].set_title("%s-%s q.95\nduration: %d" % (az, insttype, interval / 3600))
         axes[3].set_ylabel("Price $")
         axes[3].plot(xvalues, series_p95_before, label="before")
         axes[3].plot(xvalues, series_p95_after, label="after")
@@ -131,11 +106,13 @@ def main():
 
             print("producing a graph for %s - %s" % (az, insttype))
 
-            f, axes = plt.subplots(4, 2, figsize=(10, 10))
+            f, axes = plt.subplots(4, 4, figsize=(24, 12))
             axes = axes.flatten()
 
-            make_graph(az, insttype, data_before, data_after, 24 * 3600, axes[0::2])
-            make_graph(az, insttype, data_before, data_after, 3600, axes[1::2])
+            make_graph(az, insttype, list(data_before), list(data_after), 3600, axes[0::4])
+            make_graph(az, insttype, list(data_before), list(data_after), 8 * 3600, axes[1::4])
+            make_graph(az, insttype, list(data_before), list(data_after), 24 * 3600, axes[2::4])
+            make_graph(az, insttype, list(data_before), list(data_after), 3 * 24 * 3600, axes[3::4])
 
             plt.legend()
             plt.tight_layout()
